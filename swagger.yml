@@ -1,9 +1,7 @@
-# swagger.yml
-
 openapi: 3.0.0
 info:
-  title: "RP Flask REST API"
-  description: "An API about people and notes"
+  title: "Trail Management API"
+  description: "An API for managing trails with detailed properties"
   version: "1.0.0"
 
 servers:
@@ -11,156 +9,224 @@ servers:
 
 components:
   schemas:
-    Person:
+    LocationPoint:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        description:
+          type: string
+        Trail_ID:
+          type: integer
+        Order_no:
+          type: integer
+
+    Trail:
       type: "object"
       required:
-        - lname
+        - Trail_name
+        - Distance
+        - Elevation
+        - Owner_ID
       properties:
-        fname:
+
+        Trail_name:
           type: "string"
-        lname:
+          maxLength: 255
+          description: "Name of the trail"
+        Trail_summary:
           type: "string"
+          nullable: true
+          description: "A brief summary of the trail"
+        Trail_Description:
+          type: "string"
+          nullable: true
+          description: "A detailed description of the trail"
+        Difficulty:
+          type: "string"
+          nullable: true
+          description: "The difficulty level of the trail (e.g., easy, moderate, hard)"
+        Location:
+          type: "string"
+          nullable: true
+          description: "The location of the trail"
+        Distance:
+          type: "integer"
+          description: "The length of the trail in kilometers"
+        Elevation:
+          type: "integer"
+          description: "The elevation of the trail in meters"
+        Route_Type:
+          type: "string"
+          nullable: true
+          description: "Type of route (e.g., loop, out & back, point-to-point)"
+        Owner_ID:
+          type: "integer"
+          description: "The ID of the owner associated with the trail"
+    TrailView:
+      type: "object"
+      required:
+        - Trail_name
+        - Distance
+        - Elevation
+        - Owner_ID
+      properties:
+
+        Trail_name:
+          type: "string"
+          maxLength: 255
+          description: "Name of the trail"
+        Trail_summary:
+          type: "string"
+          nullable: true
+          description: "A brief summary of the trail"
+        Trail_Description:
+          type: "string"
+          nullable: true
+          description: "A detailed description of the trail"
+        Difficulty:
+          type: "string"
+          nullable: true
+          description: "The difficulty level of the trail (e.g., easy, moderate, hard)"
+        Location:
+          type: "string"
+          nullable: true
+          description: "The location of the trail"
+        Distance:
+          type: "integer"
+          description: "The length of the trail in kilometers"
+        Elevation:
+          type: "integer"
+          description: "The elevation of the trail in meters"
+        Route_Type:
+          type: "string"
+          nullable: true
+          description: "Type of route (e.g., loop, out & back, point-to-point)"
+        Owner_ID:
+          type: "integer"
+          description: "The ID of the owner associated with the trail"
+        LocationPoints:
+          type: array
+          items:
+            $ref: "#/components/schemas/LocationPoint"
+          description: "List of location points associated with this trail"
+    LocationPointUpdate:
+      type: object
+      properties:
+        latitude:
+          type: integer
+          description: "Latitude value of the location point"
+        longitude:
+          type: integer
+          description: "Longitude value of the location point"
+        description:
+          type: string
+          description: "Description of the location point"
+
   parameters:
-    lname:
-      name: "lname"
-      description: "Last name of the person to get"
-      in: path
-      required: True
-      schema:
-        type: "string"
-    note_id:
-      name: "note_id"
-      description: "ID of the note"
+    trail_id:
+      name: "trail_id"
+      description: "ID of the trail"
       in: path
       required: true
       schema:
         type: "integer"
 
+
 paths:
-  /people:
+  /trails:
     get:
-      operationId: "people.read_all"
+      operationId: "trails.read_all"
       tags:
-        - "People"
-      summary: "Read the list of people"
+        - Trails
+      summary: "Retrieve all trails and loc points"
       responses:
         "200":
-          description: "Successfully read people list"
-    post:
-      operationId: "people.create"
-      tags:
-        - People
-      summary: "Create a person"
-      requestBody:
-          description: "Person to create"
-          required: True
+          description: "Successfully retrieved the list of trails"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Person"
-          x-body-name: person
-      responses:
-        "201":
-          description: "Successfully created person"
-  /people/{lname}:
-    get:
-      operationId: "people.read_one"
-      tags:
-        - People
-      summary: "Read one person"
-      parameters:
-        - $ref: "#/components/parameters/lname"
-      responses:
-        "200":
-          description: "Successfully read person"
-    put:
-      tags:
-        - People
-      operationId: "people.update"
-      summary: "Update a person"
-      parameters:
-        - $ref: "#/components/parameters/lname"
-      responses:
-        "200":
-          description: "Successfully updated person"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Person"
-        x-body-name: "person"
-    delete:
-      tags:
-        - People
-      operationId: "people.delete"
-      summary: "Delete a person"
-      parameters:
-        - $ref: "#/components/parameters/lname"
-      responses:
-        "204":
-          description: "Successfully deleted person"
-  /notes:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Trail"
     post:
-      operationId: "notes.create"
+      operationId: "trails.create"
       tags:
-        - Notes
-      summary: "Create a note associated with a person"
+        - Trails
+      summary: "Create a new trail"
       requestBody:
-        description: "Note to create"
+        description: "Trail to create"
         required: true
         content:
           application/json:
             schema:
-              type: "object"
-              properties:
-                person_id:
-                  type: "integer"
-                content:
-                  type: "string"
-        x-body-name: "note"
+              $ref: "#/components/schemas/Trail"
+        x-body-name: trail
       responses:
         "201":
-          description: "Successfully created a note"
+          description: "Successfully created a trail"
 
-  /notes/{note_id}:
+  /trails/{trail_id}:
     get:
-      operationId: "notes.read_one"
+      operationId: "trails.read_one"
       tags:
-        - Notes
-      summary: "Read one note"
+        - Trails
+      summary: "Retrieve a specific trail by its ID and loc points"
       parameters:
-        - $ref: "#/components/parameters/note_id"
+        - $ref: "#/components/parameters/trail_id"
       responses:
         "200":
-          description: "Successfully read one note"
+          description: "Successfully retrieved trail"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trail"
     put:
+      operationId: "trails.update"
       tags:
-        - Notes
-      operationId: "notes.update"
-      summary: "Update a note"
+        - Trails
+      summary: "Update a trail by its ID"
       parameters:
-        - $ref: "#/components/parameters/note_id"
+        - $ref: "#/components/parameters/trail_id"
+      requestBody:
+        description: "Updated trail data"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Trail"
+        x-body-name: trail
       responses:
         "200":
-          description: "Successfully updated note"
+          description: "Successfully updated trail"
+    delete:
+      operationId: "trails.delete"
+      tags:
+        - Trails
+      summary: "Delete a trail by its ID"
+      parameters:
+        - $ref: "#/components/parameters/trail_id"
+      responses:
+        "204":
+          description: "Successfully deleted trail"
+  /location_point:
+    post:
+      summary: Create a new location point
+      operationId: locationPoint.create
       requestBody:
         content:
           application/json:
             schema:
-              type: "object"
-              properties:
-                content:
-                  type: "string"
-        x-body-name: "note"
-
-
-    delete:
-      tags:
-        - Notes
-      operationId: "notes.delete"
-      summary: "Delete a note"
-      parameters:
-        - $ref: "#/components/parameters/note_id"
+              $ref: '#/components/schemas/LocationPoint'
+        x-body-name: locationPoint
       responses:
-        "204":
-          description: "Successfully deleted note"
+        201:
+          description: Location Point created successfully
+        400:
+          description: Request body is missing location point data
+        406:
+          description: Order Number already exists in the Trail

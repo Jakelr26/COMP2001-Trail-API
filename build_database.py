@@ -1,5 +1,5 @@
 # build_database.py
-
+'''
 from datetime import datetime
 from config import app, db
 from models import Person, Note
@@ -44,4 +44,4 @@ with app.app_context():
                 )
             )
         db.session.add(new_person)
-    db.session.commit()
+    db.session.commit()'''
