@@ -216,7 +216,7 @@ paths:
   /location_point:
     post:
       summary: Create a new location point
-      operationId: locationPoint.create
+      operationId: "locationPoint.create"
       requestBody:
         content:
           application/json:
@@ -230,3 +230,49 @@ paths:
           description: Request body is missing location point data
         406:
           description: Order Number already exists in the Trail
+#  ---
+  /location_point/{locationPoint_id}:
+    put:
+      summary: Update a location point by ID
+      operationId: "locationPoint.update"
+      parameters:
+        - name: locationPoint_id
+          in: path
+          description: "The ID of the location point to update"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Data to update in the location point
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationPointUpdate'
+        x-body-name: locationPoint
+      responses:
+        200:
+          description: Location point updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationPoint"
+        400:
+          description: Missing or invalid request body
+        404:
+          description: Location point not found
+    delete:
+      summary: Delete a location point by ID
+      operationId: "locationPoint.delete"
+      parameters:
+        - name: locationPoint_id
+          in: path
+          description: "The ID of the location point to delete"
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: Location point deleted successfully
+        404:
+          description: Location point not found

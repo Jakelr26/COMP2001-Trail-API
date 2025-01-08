@@ -12,13 +12,12 @@ from marshmallow import fields
 from config import db, ma
 
 
-
 # LocationPoint model
 class LocationPoint(db.Model):
     __tablename__ = "LocationPoint"
     __table_args__ = {'schema': 'cw2'}  # Specify the schema
 
-    Location_Point = db.Column(db.Integer, primary_key=True, nullable=False)
+    Location_Point = db.Column(db.Integer, primary_key=True)
     latitude = db.Column(db.Integer, nullable=False)
     longitude = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String, nullable=True)
@@ -31,11 +30,11 @@ class LocationPointSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
         ordered = True
 
-        exclude = ["Location_Point"]
+        #exclude = ["Location_Point"]
+
     latitude = fields.Float()
     longitude = fields.Float()
     description = fields.Str()
-
 
 
 # Trail_location_point model
@@ -43,17 +42,26 @@ class Trail_location_Point(db.Model):
     __tablename__ = "Trail_location_Point"
     __table_args__ = {'schema': 'cw2'}  # Specify the schema
 
-    Trail_ID = db.Column(db.Integer,db.ForeignKey("cw2.Trail.Trail_ID"),primary_key=True, nullable=False)
-    Location_Point = db.Column(db.Integer, db.ForeignKey("cw2.LocationPoint.Location_Point" ), nullable=False, primary_key=True)
+    Trail_ID = db.Column(
+        db.Integer,
+        db.ForeignKey("cw2.Trail.Trail_ID"),
+        primary_key=True,
+        nullable=False)
+    Location_Point = db.Column(
+        db.Integer,
+        db.ForeignKey("cw2.LocationPoint.Location_Point",
+                      ondelete="CASCADE"),
+        nullable=False,
+        primary_key=True)
     Order_no = db.Column(db.Integer, nullable=False)
 
-    LocationPoint = relationship(LocationPoint,
-        backref=db.backref("Trail_location_point"),
-        cascade="all, delete, delete-orphan",
-        single_parent=True
-    )
-
-
+    LocationPoint = relationship("LocationPoint",
+         backref=db.backref(
+             "Trail_location_point",
+             cascade="all, delete, delete-orphan",
+             passive_deletes=True
+         )
+     )
 
 
 class Trail_location_Point_schema(ma.SQLAlchemyAutoSchema):
@@ -61,7 +69,7 @@ class Trail_location_Point_schema(ma.SQLAlchemyAutoSchema):
         model = Trail_location_Point
         load_instance = True
         sqla_session = db.session
-        # include_fk = True
+        #include_fk = True
         include_relationships = True
         ordered = True
 
@@ -165,17 +173,14 @@ class Trail(db.Model):
     )
 
 
-
 class Trailschema(ma.SQLAlchemyAutoSchema):
-    #features = fields.Nested(Feature_schema, many=True)
-
     class Meta:
         model = Trail
+        ordered = True
         load_instance = True
         sqla_session = db.session
         include_fk = True
         include_relationships = True
-        ordered = True
 
     Trail_ID = fields.Integer()
     Trail_name = fields.Str()
@@ -185,18 +190,17 @@ class Trailschema(ma.SQLAlchemyAutoSchema):
     Location = fields.Str()
     Distance = fields.Integer()
     Elevation = fields.Integer()
+    Route_Type = fields.Str()
+    Owner_ID = fields.Integer()
     Trail_location_point = fields.Nested(Trail_location_Point_schema, many=True)
+#features = fields.Nested(Feature_schema, many=True)
 
-Trail_schema = Trailschema()
-Trail_schemas = Trailschema(many=True)
+
 
 LocationPoint_schema = LocationPointSchema()
 LocationPoint_schemas = LocationPointSchema(many=True)
 
 Trail_location_point_schema = Trail_location_Point_schema()
-
-
-
 
 '''
 class Note(db.Model):

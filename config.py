@@ -7,9 +7,10 @@ from flask_marshmallow import Marshmallow
 
 import urllib.parse
 
-database = 'COMP2001_test'
+# database = 'COMP2001_test'
+database = 'COMP2001_JLear'
 username = 'JLear'
-password = 'SkcY333+'
+password = 'LekP847*'
 
 encoded_password = urllib.parse.quote_plus(password)
 
@@ -18,7 +19,7 @@ connex_app = connexion.App(__name__, specification_dir=basedir)
 
 app = connex_app.app
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"mssql+pyodbc://{username}:{encoded_password}@localhost/{database}"
+    f"mssql+pyodbc://{username}:{encoded_password}@dist-6-505.uopnet.plymouth.ac.uk/{database}"
     "?driver=ODBC+Driver+17+for+SQL+Server"
     "&TrustServerCertificate=yes"
     "&Encrypt=yes"

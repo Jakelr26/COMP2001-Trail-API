@@ -1,7 +1,7 @@
 from flask import abort, make_response
 
 from config import db
-from models import Trail, Trail_schema, Trail_location_Point, Trail_schemas
+from models import Trail, Trailschema, Trail_location_Point
 from sqlalchemy.orm import joinedload
 
 
@@ -12,13 +12,14 @@ def read_all():
     for trail in trails:
         print(trail.Trail_location_point)
 
+    schema = Trailschema(many=True)
 
-    return Trail_schemas.dump(trails)
+    return schema.dump(trails)
 
 def read_one(trail_id):
     trail = Trail.query.get(trail_id)
 
-    schema = Trail_schema()
+    schema = Trailschema()
     result = schema.dump(trail)
     if result is None:
         abort(404, f"Trail with id {trail_id} not found")
@@ -30,13 +31,13 @@ def create(trail):
     if trail is None:
         abort(400, "Request body is missing trail data")
 
-    trail_schema_self = Trail_schema()
+    trail_schema_self = Trailschema()
     new_trail = trail_schema_self.load(data=trail, session=db.session)
     db.session.add(new_trail)
     db.session.commit()
 
-    schema = Trail_schema()
-    result = schema.dump(new_trail)
+
+    result = Trailschema().dump(new_trail)
     return result, 201
 
 def update(trail_id, trail):
@@ -45,7 +46,7 @@ def update(trail_id, trail):
 
     existing_trail = Trail.query.filter(Trail.Trail_ID == trail_id).one_or_none()
     if existing_trail:
-        trail_schema_self = Trail_schema()
+        trail_schema_self = Trailschema()
         update_trail = trail_schema_self.load(trail, session=db.session)
         existing_trail.Trail_name = update_trail.Trail_name
         existing_trail.Trail_summary = update_trail.Trail_summary
@@ -64,7 +65,10 @@ def update(trail_id, trail):
         abort(404, f"Trail with id {trail_id} not found")
 
 def delete(trail_id):
-    existing_trail = Trail.query.filter(Trail.id == trail_id).one_or_none()
+    print(f"delete() invoked with: {trail_id}")
+    existing_trail = Trail.query.filter(Trail.Trail_ID == trail_id).one_or_none()
     if existing_trail:
         db.session.delete(existing_trail)
+        db.session.commit()
+        return make_response(f"{trail_id} successfully deleted", 200)
 
