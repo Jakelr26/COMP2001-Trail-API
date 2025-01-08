@@ -49,8 +49,10 @@ class Trail_location_Point(db.Model):
         nullable=False)
     Location_Point = db.Column(
         db.Integer,
-        db.ForeignKey("cw2.LocationPoint.Location_Point",
-                      ondelete="CASCADE"),
+        db.ForeignKey(
+            "cw2.LocationPoint.Location_Point",
+            ondelete="CASCADE"
+        ),
         nullable=False,
         primary_key=True)
     Order_no = db.Column(db.Integer, nullable=False)
@@ -85,8 +87,16 @@ class Feature(db.Model):
     __tablename__ = "Feature"
     __table_args__ = {'schema': 'cw2'}  # Specify the schema
 
-    trail_feature_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    trail_feature = db.Column(db.String, nullable=True)
+    trail_feature_id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True,
+        nullable=False
+    )
+    trail_feature = db.Column(
+        db.String,
+        nullable=True
+    )
 
 
 class Feature_schema(ma.SQLAlchemyAutoSchema):
@@ -95,6 +105,8 @@ class Feature_schema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
         ordered = True
+
+    trail_feature = fields.Str()
 
 
 # Trail_feature model
@@ -106,13 +118,21 @@ class Trail_feature(db.Model):
         db.Integer,
         db.ForeignKey("cw2.Trail.Trail_ID"),
         primary_key=True,
-        autoincrement=True,
         nullable=False
     )
     Trail_Feature_ID = db.Column(
         db.Integer,
-        db.ForeignKey("cw2.Feature.trail_feature_id"),
+        db.ForeignKey("cw2.Feature.trail_feature_id", ondelete="CASCADE"),
+        primary_key=True,
         nullable=False
+    )
+    Feature = db.relationship(
+        "Feature",
+        backref=db.backref(
+            "Trail_feature",
+            cascade="all, delete, delete-orphan",
+            passive_deletes=True
+        )
     )
 
 
@@ -172,6 +192,12 @@ class Trail(db.Model):
         #lazy="joined"
     )
 
+    Trail_feature = db.relationship(
+        Trail_feature,
+        backref="Trail",
+        cascade="all, delete, delete-orphan",
+    )
+
 
 class Trailschema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -193,7 +219,7 @@ class Trailschema(ma.SQLAlchemyAutoSchema):
     Route_Type = fields.Str()
     Owner_ID = fields.Integer()
     Trail_location_point = fields.Nested(Trail_location_Point_schema, many=True)
-#features = fields.Nested(Feature_schema, many=True)
+    Trail_feature = fields.Nested(Trail_feature_schema, many=True)
 
 
 

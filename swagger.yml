@@ -9,6 +9,18 @@ servers:
 
 components:
   schemas:
+    Feature:
+      type: object
+      required:
+        - trail_feature
+        - Trail_ID
+      properties:
+        Trail_ID:
+          type: integer
+          description: "The ID of the trail (unique identifier)"
+        trail_feature:
+          type: string
+          description: "The name of the feature"
     LocationPoint:
       type: object
       properties:
@@ -128,6 +140,13 @@ components:
           description: "Description of the location point"
 
   parameters:
+    feature_id:
+      name: feature_id
+      in: path
+      required: true
+      description: "The ID of the feature to retrieve or modify"
+      schema:
+        type: integer
     trail_id:
       name: "trail_id"
       description: "ID of the trail"
@@ -276,3 +295,110 @@ paths:
           description: Location point deleted successfully
         404:
           description: Location point not found
+  /features:
+    get:
+      summary: "Retrieve all features"
+      description: "Fetch a list of all features in the system."
+      tags:
+        - Features
+      operationId: "Features.read_all"
+      responses:
+        "200":
+          description: "A list of features"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Feature"
+        "404":
+          description: "No features found"
+
+    post:
+      summary: "Create a new feature"
+      description: "Adds a new feature to the database with provided details."
+      tags:
+        - Features
+      operationId: "Features.create"
+      requestBody:
+        description: "JSON object containing the feature data"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Feature"
+        x-body-name: feature
+      responses:
+        "201":
+          description: "Feature successfully created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feature"
+        "400":
+          description: "Invalid request payload"
+
+  /features/{feature_id}:
+    get:
+      summary: "Retrieve a specific feature by ID"
+      description: "Fetch detailed information about a specific feature using its ID."
+      tags:
+        - Features
+      operationId: "Features.read_one"
+      parameters:
+        - $ref: "#/components/parameters/feature_id"
+      responses:
+        "200":
+          description: "Feature details"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feature"
+        "404":
+          description: "Feature not found for the given ID"
+    put:
+      summary: "Update a feature by ID"
+      description: "Modifies an existing feature with new details."
+      tags:
+        - Features
+      operationId: "Features.update"
+      parameters:
+        - $ref: "#/components/parameters/feature_id"
+      requestBody:
+        description: "JSON object with updated feature data"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Feature"
+        x-body-name: feature
+      responses:
+        "200":
+          description: "Feature successfully updated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feature"
+        "400":
+          description: "Invalid input or request body"
+        "404":
+          description: "Feature not found for the given ID"
+    delete:
+      summary: Delete a feature
+      description: Deletes a feature from the database by its unique ID.
+      tags:
+        - Features
+      operationId: Features.delete
+      parameters:
+        - name: feature_id
+          in: path
+          required: true
+          description: The unique identifier of the feature to delete.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully deleted the feature
+        '404':
+          description: Feature not found
+
