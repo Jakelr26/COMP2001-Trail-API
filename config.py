@@ -16,7 +16,6 @@ encoded_password = urllib.parse.quote_plus(password)
 
 basedir = pathlib.Path(__file__).parent.resolve()
 connex_app = connexion.App(__name__, specification_dir=basedir)
-
 app = connex_app.app
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     f"mssql+pyodbc://{username}:{encoded_password}@dist-6-505.uopnet.plymouth.ac.uk/{database}"

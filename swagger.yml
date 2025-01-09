@@ -139,6 +139,7 @@ components:
           type: string
           description: "Description of the location point"
 
+
   parameters:
     feature_id:
       name: feature_id
@@ -154,12 +155,52 @@ components:
       required: true
       schema:
         type: "integer"
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+#      bearerFormat: JWT
+
+
 
 
 paths:
+  /login:
+    post:
+
+      operationId: "authenticator.login"
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login successful
+                  token:
+                    type: string
+        '401':
+          description: Invalid credentials
   /trails:
     get:
       operationId: "trails.read_all"
+
       tags:
         - Trails
       summary: "Retrieve all trails and loc points"
@@ -174,6 +215,7 @@ paths:
                   $ref: "#/components/schemas/Trail"
     post:
       operationId: "trails.create"
+
       tags:
         - Trails
       summary: "Create a new trail"
@@ -192,6 +234,7 @@ paths:
   /trails/{trail_id}:
     get:
       operationId: "trails.read_one"
+
       tags:
         - Trails
       summary: "Retrieve a specific trail by its ID and loc points"
@@ -206,6 +249,8 @@ paths:
                 $ref: "#/components/schemas/Trail"
     put:
       operationId: "trails.update"
+
+
       tags:
         - Trails
       summary: "Update a trail by its ID"
@@ -224,6 +269,8 @@ paths:
           description: "Successfully updated trail"
     delete:
       operationId: "trails.delete"
+
+
       tags:
         - Trails
       summary: "Delete a trail by its ID"
@@ -236,6 +283,9 @@ paths:
     post:
       summary: Create a new location point
       operationId: "locationPoint.create"
+
+      tags:
+        - Location Point
       requestBody:
         content:
           application/json:
@@ -254,6 +304,9 @@ paths:
     put:
       summary: Update a location point by ID
       operationId: "locationPoint.update"
+
+      tags:
+        - Location Point
       parameters:
         - name: locationPoint_id
           in: path
@@ -283,6 +336,8 @@ paths:
     delete:
       summary: Delete a location point by ID
       operationId: "locationPoint.delete"
+      tags:
+        - Location Point
       parameters:
         - name: locationPoint_id
           in: path
@@ -302,6 +357,7 @@ paths:
       tags:
         - Features
       operationId: "Features.read_all"
+
       responses:
         "200":
           description: "A list of features"
@@ -320,6 +376,7 @@ paths:
       tags:
         - Features
       operationId: "Features.create"
+
       requestBody:
         description: "JSON object containing the feature data"
         required: true
@@ -345,6 +402,7 @@ paths:
       tags:
         - Features
       operationId: "Features.read_one"
+
       parameters:
         - $ref: "#/components/parameters/feature_id"
       responses:
@@ -362,6 +420,7 @@ paths:
       tags:
         - Features
       operationId: "Features.update"
+
       parameters:
         - $ref: "#/components/parameters/feature_id"
       requestBody:
@@ -389,6 +448,7 @@ paths:
       tags:
         - Features
       operationId: Features.delete
+
       parameters:
         - name: feature_id
           in: path
