@@ -13,11 +13,9 @@ from config import db
 from models import Feature, Feature_schema, Trail_feature, Trail_feature_schema
 from sqlalchemy.orm import joinedload
 
-features_bp = Blueprint("features", __name__)
 
 
 
-@features_bp.route("/features", methods=["GET"])
 # @check_for_token
 @role_req("User", "Administrator")
 def read_all():
@@ -29,7 +27,6 @@ def read_all():
         abort(404, "No features found")
     return result
 
-@features_bp.route("/features/<feature_id>", methods=["GET"])
 # @check_for_token
 @role_req("User", "Administrator")
 def read_one(feature_id):
@@ -40,7 +37,6 @@ def read_one(feature_id):
         abort(404, f"Feature with id {feature_id} not found")
     return result
 
-@features_bp.route("/features", methods=["POST"])
 # @check_for_token
 @role_req("Administrator")
 def create(feature):
@@ -79,7 +75,6 @@ def create(feature):
     result = feature_schema_self.dump(new_feature)
     return result, 201
 
-@features_bp.route("/features/<feature_id>", methods=["PUT"])
 # @check_for_token
 @role_req("Administrator")
 def update(feature_id, feature):
@@ -106,7 +101,6 @@ def update(feature_id, feature):
         abort(404, f"Feature with id {feature_id} not found")
         return result, 201
 
-@features_bp.route("/features/<feature_id>", methods=["DELETE"])
 # @check_for_token
 @role_req("Administrator")
 def delete(feature_id):
@@ -116,6 +110,4 @@ def delete(feature_id):
         db.session.commit()
         return make_response(f"{feature_id} successfully deleted", 200)
 
-if __name__ == "__main__":
-    check_for_token()
 
