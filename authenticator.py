@@ -1,6 +1,9 @@
+import json
+
 import requests, jwt
 import datetime
-
+from cryptography.fernet import Fernet
+import os
 import jwt
 from flask import jsonify, request, session, make_response, Blueprint
 
@@ -66,15 +69,27 @@ def login():
         employees_exist = User_tabel.query.filter(User_tabel.Email == username).one_or_none()
         if employees_exist:
             user_tabel_role = employees_exist.Role
-            token = {
-                "username" : username,
+            permToken = {
                 "role" : user_tabel_role,
-                'expiration' : datetime.datetime.utcnow() + datetime.timedelta(hours=1)
             }
-            token = jwt.encode(token,SECRET_KEY, algorithm="HS256")
-            print(token)
-            print({'message' : "Login successful"})
-            return token
+            token = json.dumps(permToken)
+
+            key = Fernet.generate_key()
+
+            os.environ['key'] = key.decode()
+
+            cipher_suite = Fernet(key)
+
+            permission_token = token
+            encrypted_token = cipher_suite.encrypt(permission_token.encode())
+            print(encrypted_token)
+
+            permissions = {'role_token' : encrypted_token.decode()}
+            with open('permissions.json', 'w') as json_file:
+                json.dump(permissions, json_file)
+            # print(token)
+            # print({'message' : "Login successful"})
+            return ('encrytion complete')
 
 
             #token in the cookie, was using for the HTML interface

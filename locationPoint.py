@@ -1,9 +1,18 @@
-from flask import abort, make_response
+from flask import abort, make_response, Blueprint
 
 from config import db
 from models import LocationPoint, LocationPointSchema, Trail, Trail_location_Point, Trailschema
 from sqlalchemy.orm import joinedload
 
+from token_checker import role_req
+
+location_point_bp = Blueprint("location_point", __name__)
+
+@location_point_bp.route("/location_point", methods=["GET"])
+@role_req(
+    "User",
+    "Administrator"
+)
 def read_all():
     '''locationPoints = LocationPoint.query.all()
     schema = LocationPointSchema(many=True)
@@ -19,6 +28,7 @@ def read_all():
         abort(404, "No location points found")
     return result
 
+@role_req("User", "Administrator")
 def read_one(locationPoint_id):
     locationPoint = LocationPoint.query.get(locationPoint_id)
     schema = LocationPointSchema()

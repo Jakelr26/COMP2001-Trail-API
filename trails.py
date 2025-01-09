@@ -4,8 +4,10 @@ from config import db
 from models import Trail, Trailschema, Trail_location_Point
 from sqlalchemy.orm import joinedload
 
+from token_checker import role_req
 
 
+@role_req("User", "Administrator")
 def read_all():
 
     trails = Trail.query.all()
