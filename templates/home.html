@@ -1,24 +1,86 @@
 <!-- templates/home.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>RP Flask REST API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trails List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .trail {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .location-points, .features {
+            margin-left: 30px;
+        }
+<!--        file bassed off of the view in HTML from the lab sessions-->
+    </style>
 </head>
 <body>
-    <h1>
-        Hello, People!
-    </h1>
-    {% for person in people %}
-        <h2>{{ person.fname }} {{ person.lname }}</h2>
-        <ul>
-            {% for note in person.notes %}
-                <li>
-                    {{ note.content }}
-                </li>
+    <h1>List of Trails</h1>
+
+        <a href="http://localhost:8000/api/ui/#/" style="
+        display: inline-block;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        color: white;
+        background-color: #3498db;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+    ">
+        To the API
+    </a>
+
+    {% for trail in trails %}
+    <div class="trail">
+        <h2>Trail: {{ trail.Trail_name }}</h2>
+        <p><strong>Summary:</strong> {{ trail.Trail_summary }}</p>
+        <p><strong>Description:</strong> {{ trail.Trail_Description }}</p>
+        <p><strong>Difficulty:</strong> {{ trail.Difficulty }}</p>
+        <p><strong>Location:</strong> {{ trail.Location }}</p>
+        <p><strong>Distance:</strong> {{ trail.Distance }} km</p>
+        <p><strong>Elevation:</strong> {{ trail.Elevation }} m</p>
+        <p><strong>Route Type:</strong> {{ trail.Route_Type }}</p>
+
+        <h3>Location Points:</h3>
+        <ul class="location-points">
+            {% for location_point in trail.Trail_location_point %}
+            <li>
+                <strong>Latitude:</strong> {{ location_point.LocationPoint.latitude }},
+                <strong>Longitude:</strong> {{ location_point.LocationPoint.longitude }}
+                <br>
+                <strong>Description:</strong> {{ location_point.LocationPoint.description or "N/A" }}
+            </li>
             {% endfor %}
         </ul>
+
+        <h3>Features:</h3>
+        <ul class="features">
+            {% for feature in trail.Trail_feature %}
+            <li>{{ feature.Feature.trail_feature }}</li>
+            {% endfor %}
+        </ul>
+    </div>
     {% endfor %}
+
 </body>
 </html>

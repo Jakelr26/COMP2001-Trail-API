@@ -3,24 +3,33 @@ from os import abort
 from flask import Flask
 
 from config import db
-from models import Trail_location_point, Trail_location_point_schema
+from models import Trail_location_Point, Trail_location_point_schema
+from token_checker import role_req
 
+@role_req(
+    "User",
+    "Administrator")
 def read_all():
-    Trail_location_points = Trail_location_point.query.all()
+    Trail_location_points = Trail_location_Point.query.all()
     schema = Trail_location_point_schema(many=True)
     result = schema.dump(Trail_location_points)
     if result is None:
         abort(404, "No trail location points found")
     return result
 
+@role_req(
+    "User",
+    "Administrator")
 def read_one(Trail_location_point_id):
-    Trail_location_points = Trail_location_point.query.get(Trail_location_point_id)
+    Trail_location_points = Trail_location_Point.query.get(Trail_location_point_id)
     schema = Trail_location_point_schema()
     result = schema.dump(Trail_location_points)
     if result is None:
         abort(404, f"Trail location point with id {Trail_location_point_id} not found")
     return result
 
+@role_req(
+    "Administrator")
 def create(Trail_location_point):
     print(Trail_location_point)
 
@@ -36,6 +45,8 @@ def create(Trail_location_point):
     result = schema.dump(new_Trail_location_point)
     return result, 201
 
+@role_req(
+    "Administrator")
 def update(Trail_location_point_id, Trail_location_point):
     if Trail_location_point is None:
         abort(400, "Request body is missing trail location point data")
@@ -55,7 +66,10 @@ def update(Trail_location_point_id, Trail_location_point):
     else:
         abort(404, f"Trail location point with id {Trail_location_point_id} not found")
 
+@role_req(
+    "Administrator"
+)
 def delete(Trail_location_point_id):
-    existing_Trail_location_point = Trail_location_point.query.filter(Trail_location_point.id == Trail_location_point_id).one_or_none()
+    existing_Trail_location_point = Trail_location_Point.query.filter(Trail_location_Point.id == Trail_location_point_id).one_or_none()
     if existing_Trail_location_point:
         db.session.delete(existing_Trail_location_point)

@@ -37,6 +37,7 @@ def read_one(locationPoint_id):
         abort(404, f"Location point with id {locationPoint_id} not found")
     return result
 
+@role_req("Administrator")
 def create(locationPoint):
     print(locationPoint)
 
@@ -86,6 +87,7 @@ def create(locationPoint):
 
 
 
+@role_req("Administrator")
 def update(locationPoint_id, locationPoint):
 
     if locationPoint is None:
@@ -114,7 +116,7 @@ def update(locationPoint_id, locationPoint):
 
 
 
-
+@role_req("Administrator")
 def delete(locationPoint_id):
     existing_locationPoint = LocationPoint.query.filter(LocationPoint.Location_Point == locationPoint_id).one_or_none()
 

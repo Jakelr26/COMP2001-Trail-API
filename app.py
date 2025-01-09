@@ -6,7 +6,6 @@ from flask import render_template, Flask, jsonify, request, session, make_respon
 
 from authenticator import auth
 import config
-from blueprints import register_blueprints
 from models import Trail, Trail_location_Point
 from functools import wraps
 
@@ -16,13 +15,6 @@ app.app.json.sort_keys = False
 app.add_api(config.basedir / "swagger.yml")
 
 app.app.config['SECRET_KEY'] = "MY_SUPER_DUPER_SECRET_KEY"
-
-
-#Registrin blueprints
-register_blueprints(app.app)
-
-
-
 
 
 @app.route("/")

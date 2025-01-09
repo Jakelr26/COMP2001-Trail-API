@@ -17,7 +17,9 @@ def read_all():
     schema = Trailschema(many=True)
 
     return schema.dump(trails)
-
+@role_req(
+    "User",
+    "Administrator")
 def read_one(trail_id):
     trail = Trail.query.get(trail_id)
 
@@ -27,6 +29,7 @@ def read_one(trail_id):
         abort(404, f"Trail with id {trail_id} not found")
     return result
 
+@role_req("Administrator")
 def create(trail):
     print(trail)
 
@@ -42,6 +45,7 @@ def create(trail):
     result = Trailschema().dump(new_trail)
     return result, 201
 
+@role_req("Administrator")
 def update(trail_id, trail):
     if trail is None:
         abort(400, "Request body is missing trail data")
@@ -66,6 +70,7 @@ def update(trail_id, trail):
     else:
         abort(404, f"Trail with id {trail_id} not found")
 
+@role_req
 def delete(trail_id):
     print(f"delete() invoked with: {trail_id}")
     existing_trail = Trail.query.filter(Trail.Trail_ID == trail_id).one_or_none()
