@@ -9,6 +9,7 @@ import config
 from models import Trail, Trail_location_Point
 from functools import wraps
 
+from token_checker import role_req
 
 app = config.connex_app
 app.app.json.sort_keys = False
