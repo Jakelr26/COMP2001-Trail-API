@@ -1,8 +1,7 @@
 from flask import abort, make_response
 
 from config import db
-from models import Trail, Trailschema, Trail_location_Point
-from sqlalchemy.orm import joinedload
+from models import Trail, Trailschema
 
 from token_checker import role_req
 

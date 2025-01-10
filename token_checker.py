@@ -1,12 +1,8 @@
 import json
 import os
-import sys
-
 from cryptography.fernet import Fernet
-from flask import render_template, Flask, jsonify, request, session, make_response, redirect, url_for
-import jwt
+from flask import jsonify
 from functools import wraps
-import config
 
 def role_req (*roles):
     def wrapper(f):

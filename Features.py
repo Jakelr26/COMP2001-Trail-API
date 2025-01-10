@@ -1,18 +1,9 @@
-import os
-from multiprocessing.reduction import duplicate
-import requests
-import json
-import sys
-from flask import abort, make_response, Blueprint
-from pyexpat import features
-from cryptography.fernet import Fernet
-import json
+
+from flask import abort, make_response
 
 from token_checker import role_req
 from config import db
-from models import Feature, Feature_schema, Trail_feature, Trail_feature_schema
-from sqlalchemy.orm import joinedload
-
+from models import Feature, Feature_schema, Trail_feature
 
 
 

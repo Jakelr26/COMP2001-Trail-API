@@ -1,12 +1,6 @@
 #models.py
-from datetime import datetime
-from datetime import datetime
 
-from flask import Flask
-from marshmallow_sqlalchemy import fields
-
-import pytz
-from sqlalchemy.orm import relationship, foreign
+from sqlalchemy.orm import relationship
 from marshmallow import fields
 
 from config import db, ma

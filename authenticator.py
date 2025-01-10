@@ -1,13 +1,10 @@
 import json
 
-import requests, jwt
-import datetime
+import requests
 from cryptography.fernet import Fernet
 import os
-import jwt
-from flask import jsonify, request, session, make_response, Blueprint
+from flask import jsonify, request, Blueprint
 
-from config import app
 from models import User_tabel
 
 

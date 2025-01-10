@@ -3,7 +3,6 @@ import pathlib
 import connexion
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-#from sqlalchemy import create_engine
 
 import urllib.parse
 

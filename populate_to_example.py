@@ -1,6 +1,6 @@
-from config import db
+from config import db, app  # Import `app` in addition to `db`
 from models import (
-    Feature, Trail_feature, LocationPoint, Trail_location_Point, User_tabel, Trail
+    Feature, LocationPoint, User_tabel, Trail
 )
 
 
@@ -112,6 +112,7 @@ def populate_tables():
 
 
 if __name__ == "__main__":
-    # Ensure the database tables exist
-    db.create_all()
-    populate_tables()
+    # Use app context to create tables and populate them
+    with app.app_context():  # Set up the application context
+        db.create_all()  # Ensure tables exist
+        populate_tables()

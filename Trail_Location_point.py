@@ -1,7 +1,5 @@
 from os import abort
 
-from flask import Flask
-
 from config import db
 from models import Trail_location_Point, Trail_location_point_schema
 from token_checker import role_req

@@ -1,15 +1,9 @@
 #app.py
-import datetime
+from flask import render_template, jsonify, session, make_response
 
-import jwt
-from flask import render_template, Flask, jsonify, request, session, make_response, redirect, url_for
-
-from authenticator import auth
 import config
-from models import Trail, Trail_location_Point
-from functools import wraps
+from models import Trail
 
-from token_checker import role_req
 
 app = config.connex_app
 app.app.json.sort_keys = False
