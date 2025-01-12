@@ -3,7 +3,7 @@ import pyodbc
 '''
 Making the table/ dbo
 ''
-
+#pre databse issues login
 server = 'dist-6-505.uopnet.plymouth.ac.uk'
 database = 'COMP2001_JLear'
 username = 'JLear'
@@ -13,6 +13,8 @@ driver = '{ODBC Driver 17 for SQL Server}'
 server = 'localhost'
 database = 'COMP2001_test'
 '''
+#my server details
+#should be a single use file - I use to copy and paste different parts into the python comand line
 server = 'dist-6-505.uopnet.plymouth.ac.uk'
 database = 'COMP2001_JLear'
 username = 'JLear'

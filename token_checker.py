@@ -4,13 +4,14 @@ from cryptography.fernet import Fernet
 from flask import jsonify
 from functools import wraps
 
+#function that wraps a function to check if users are permissed
 def role_req (*roles):
     def wrapper(f):
         @wraps(f)
-        def wrapped(*args, **kwargs):
-            permissions_and_role = check_for_token()
+        def wrapped(*args, **kwargs): #arguments and keyword arguments (whats parsed in)
+            permissions_and_role = check_for_token() #calls the check fucntion
             dataholder = json.loads(permissions_and_role)
-            permissions = dataholder['role']
+            permissions = dataholder['role'] #role key
             print(permissions)
             if isinstance(permissions, str):
                 permissions = permissions.split(",") # splitem in two is both there
@@ -23,30 +24,30 @@ def role_req (*roles):
 
 
 
-
+#checks if encrypted token is a valid role
 def check_for_token():
-    key = os.environ.get("key")
+    key = os.environ.get("key") #init key
     if not key:
-        print("Error: encryption key not found in environment variables.")
+        print("Error: encryption key not found in environment variables.") #checks
         return
 
     key = key.encode()
-    cipher_suite = Fernet(key)
+    cipher_suite = Fernet(key) #using fernet for the keys
 
     try:
         with open("permissions.json", "r") as f:
             permissions = json.load(f)
-            encrypted_permissions = permissions["role_token"]
+            encrypted_permissions = permissions["role_token"] #making perms a token
     except FileNotFoundError:
-        print("Error: permissions.json file not found.")
+        print("Error: permissions.json file not found.") #Error check
         return
 
-    try:
+    try: #graceful decryption
         decrypted_permissions = cipher_suite.decrypt(encrypted_permissions.encode()).decode()
-        print(decrypted_permissions)
+        print(decrypted_permissions) #terminal prints permissiosn (would be removed in deployment for security reasons)
     except Exception as e:
         print("Error during decrpty")
-        print(e)
+        print(e) #error details
         return
 
     return decrypted_permissions

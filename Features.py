@@ -7,28 +7,28 @@ from models import Feature, Feature_schema, Trail_feature
 
 
 
-# @check_for_token
+# checks for roles and reads all of the featues
 @role_req("User", "Administrator")
 def read_all():
 
     features = Feature.query.all()
-    schema = Feature_schema(many=True)
+    schema = Feature_schema(many=True) #sets many relationship to schema
     result = schema.dump(features)
     if result is None:
-        abort(404, "No features found")
+        abort(404, "No features found") #error report back
     return result
 
-# @check_for_token
+# read one feature by its id (found in teh read all and trails)
 @role_req("User", "Administrator")
 def read_one(feature_id):
-    feature = Feature.query.get(feature_id)
+    feature = Feature.query.get(feature_id) #gets the schema detaisl
     schema = Feature_schema()
-    result = schema.dump(feature)
+    result = schema.dump(feature)#dumps data into schema and sets data to result for JSOn
     if result is None:
         abort(404, f"Feature with id {feature_id} not found")
     return result
 
-# @check_for_token
+# Admin only fucntion to create a feature
 @role_req("Administrator")
 def create(feature):
     print(feature)
@@ -40,19 +40,19 @@ def create(feature):
     }
 
 
-    feature_schema_self = Feature_schema()
-    new_feature = feature_schema_self.load(data=feature_table_only, session=db.session)
+    feature_schema_self = Feature_schema() #schema comunication
+    new_feature = feature_schema_self.load(data=feature_table_only, session=db.session) #Loak references
     db.session.add(new_feature)
     db.session.commit()
 
     Trail_ID = feature.get("Trail_ID")
     if not Trail_ID:
-        abort(400, "Missing required field: Trail_ID")
+        abort(400, "Missing required field: Trail_ID") #nongracefull chack for trail
 
     trail_feature = feature.get("trail_feature")
 
 
-
+    #dupe checking
     duplicate_feature_name = Trail_feature.query.filter_by(Trail_ID=Trail_ID, Trail_Feature_ID=new_feature.trail_feature_id).one_or_none()
     if duplicate_feature_name:
         abort(406, f"feature with name {trail_feature} already exists for Trail ID {Trail_ID}")
@@ -66,12 +66,13 @@ def create(feature):
     result = feature_schema_self.dump(new_feature)
     return result, 201
 
-# @check_for_token
+# Updating a Feature
 @role_req("Administrator")
 def update(feature_id, feature):
     if feature is None:
         abort(400, "Request body is missing feature data")
 
+    #checks that the feature exisists
     existing_feature = Feature.query.filter(Feature.trail_feature_id == feature_id).one_or_none()
     if existing_feature:
         feature_table_only = {
@@ -92,7 +93,7 @@ def update(feature_id, feature):
         abort(404, f"Feature with id {feature_id} not found")
         return result, 201
 
-# @check_for_token
+# deletes a feature
 @role_req("Administrator")
 def delete(feature_id):
     existing_feature = Feature.query.filter(Feature.trail_feature_id == feature_id).one_or_none()

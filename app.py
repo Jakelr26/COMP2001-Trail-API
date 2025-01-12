@@ -9,17 +9,18 @@ app = config.connex_app
 app.app.json.sort_keys = False
 app.add_api(config.basedir / "swagger.yml")
 
+#the secret key, no very secure as in the code, but due to scope is the only option i can think of
 app.app.config['SECRET_KEY'] = "MY_SUPER_DUPER_SECRET_KEY"
 
-
+#the home page endpoint "/"
 @app.route("/")
 def home():
     trails = Trail.query.all()
 
     #return redirect("/api/ui/")
-    return render_template("home.html", trails=trails)
+    return render_template("home.html", trails=trails) # renders home.html
 
-
+#logout endpoint that ends the session
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
     session.clear()
@@ -29,7 +30,7 @@ def logout():
 
     return response
 
-
+#used to run the whole of app.py
 if __name__ == "__main__":
     # import uvicorn
     # uvicorn.run(app, host="0.0.0.0", port=8000)

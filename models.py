@@ -11,12 +11,12 @@ class LocationPoint(db.Model):
     __tablename__ = "LocationPoint"
     __table_args__ = {'schema': 'cw2'}  # Specify the schema
 
-    Location_Point = db.Column(db.Integer, primary_key=True)
-    latitude = db.Column(db.Integer, nullable=False)
+    Location_Point = db.Column(db.Integer, primary_key=True) #defines a pk
+    latitude = db.Column(db.Integer, nullable=False) #has to have a feature
     longitude = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String, nullable=True)
 
-
+#marshmallow shcema using sqlalchemy
 class LocationPointSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LocationPoint
@@ -36,7 +36,7 @@ class Trail_location_Point(db.Model):
     __tablename__ = "Trail_location_Point"
     __table_args__ = {'schema': 'cw2'}  # Specify the schema
 
-    Trail_ID = db.Column(
+    Trail_ID = db.Column( #a primary key and foreighn key
         db.Integer,
         db.ForeignKey("cw2.Trail.Trail_ID"),
         primary_key=True,
@@ -45,7 +45,7 @@ class Trail_location_Point(db.Model):
         db.Integer,
         db.ForeignKey(
             "cw2.LocationPoint.Location_Point",
-            ondelete="CASCADE"
+            ondelete="CASCADE" #to remove foreighn key constraints
         ),
         nullable=False,
         primary_key=True)
@@ -55,7 +55,7 @@ class Trail_location_Point(db.Model):
          backref=db.backref(
              "Trail_location_point",
              cascade="all, delete, delete-orphan",
-             passive_deletes=True
+             passive_deletes=True #ais fk contraint delets
          )
      )
 
@@ -67,9 +67,9 @@ class Trail_location_Point_schema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
         #include_fk = True
         include_relationships = True
-        ordered = True
+        ordered = True #stops json being alphabetical order
 
-        exclude = ("Trail_ID", "Location_Point")
+        exclude = ("Trail_ID", "Location_Point") # stops beign displayed as would be a repeat
 
     Order_no = fields.Integer()
 
@@ -84,7 +84,7 @@ class Feature(db.Model):
     trail_feature_id = db.Column(
         db.Integer,
         primary_key=True,
-        autoincrement=True,
+        autoincrement=True, #equivalent of an entity diagram in SQL
         nullable=False
     )
     trail_feature = db.Column(
@@ -177,7 +177,7 @@ class Trail(db.Model):
         nullable=False
     )
 
-    Trail_location_point = db.relationship(
+    Trail_location_point = db.relationship( # relationships to the foreighn key trail_location_point
         Trail_location_Point,
         backref="Trail",
         cascade="all, delete, delete-orphan",
@@ -186,7 +186,7 @@ class Trail(db.Model):
         #lazy="joined"
     )
 
-    Trail_feature = db.relationship(
+    Trail_feature = db.relationship( # foreighn key realtionship
         Trail_feature,
         backref="Trail",
         cascade="all, delete, delete-orphan",
@@ -200,7 +200,7 @@ class Trailschema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
         include_fk = True
-        include_relationships = True
+        include_relationships = True # when displaying JSON, it includes the referenced foreighn keys
 
     Trail_ID = fields.Integer()
     Trail_name = fields.Str()
@@ -212,7 +212,7 @@ class Trailschema(ma.SQLAlchemyAutoSchema):
     Elevation = fields.Integer()
     Route_Type = fields.Str()
     Owner_ID = fields.Integer()
-    Trail_location_point = fields.Nested(Trail_location_Point_schema, many=True)
+    Trail_location_point = fields.Nested(Trail_location_Point_schema, many=True) # many to one relationship
     Trail_feature = fields.Nested(Trail_feature_schema, many=True)
 
 
@@ -223,6 +223,7 @@ LocationPoint_schemas = LocationPointSchema(many=True)
 Trail_location_point_schema = Trail_location_Point_schema()
 
 '''
+#code from the lab to reference later
 class Note(db.Model):
     __tablename__ = "note"
     note_id = db.Column(db.Integer, primary_key=True, autoincrement=True)

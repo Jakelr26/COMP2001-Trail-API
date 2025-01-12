@@ -4,6 +4,8 @@ info:
   description: "An API for managing trails with detailed properties"
   version: "1.0.0"
 
+#this file is what defines the buttons for teh swagger layout
+#  aswell as the components and how its called
 servers:
   - url: "/api"
 

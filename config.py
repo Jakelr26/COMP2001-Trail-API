@@ -6,12 +6,16 @@ from flask_marshmallow import Marshmallow
 
 import urllib.parse
 
-# database = 'COMP2001_test'
+#This file connects to the Database
+
+# database = 'COMP2001_test' #-file for nonserver localhost
+#db connection details
 database = 'COMP2001_JLear'
 username = 'JLear'
 password = 'LekP847*'
 
 encoded_password = urllib.parse.quote_plus(password)
+# ^ used to get around their being a special charachter in password
 
 basedir = pathlib.Path(__file__).parent.resolve()
 connex_app = connexion.App(__name__, specification_dir=basedir)
